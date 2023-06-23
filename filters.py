@@ -16,6 +16,7 @@ iterator.
 
 You'll edit this file in Tasks 3a and 3c.
 """
+import itertools
 import operator
 
 
@@ -109,7 +110,33 @@ def create_filters(
     :return: A collection of filters for use with `query`.
     """
     # TODO: Decide how you will represent your filters.
-    return ()
+    """Create a collection of filters from user-specified criteria."""
+    # Initialize an empty list of filters
+    filters = []
+
+    # Add filters based on input parameters
+    if date is not None:
+        filters.append({'attribute': 'time', 'operator': '==', 'value': date})
+    if start_date is not None:
+        filters.append({'attribute': 'time', 'operator': '>=', 'value': start_date})
+    if end_date is not None:
+        filters.append({'attribute': 'time', 'operator': '<=', 'value': end_date})
+    if distance_min is not None:
+        filters.append({'attribute': 'distance', 'operator': '>=', 'value': distance_min})
+    if distance_max is not None:
+        filters.append({'attribute': 'distance', 'operator': '<=', 'value': distance_max})
+    if velocity_min is not None:
+        filters.append({'attribute': 'velocity', 'operator': '>=', 'value': velocity_min})
+    if velocity_max is not None:
+        filters.append({'attribute': 'velocity', 'operator': '<=', 'value': velocity_max})
+    if diameter_min is not None:
+        filters.append({'attribute': 'diameter', 'operator': '>=', 'value': diameter_min})
+    if diameter_max is not None:
+        filters.append({'attribute': 'diameter', 'operator': '<=', 'value': diameter_max})
+    if hazardous is not None:
+        filters.append({'attribute': 'is_hazardous', 'operator': '==', 'value': hazardous})
+
+    return tuple(AttributeFilter(**f) for f in filters)
 
 
 def limit(iterator, n=None):
@@ -122,4 +149,7 @@ def limit(iterator, n=None):
     :yield: The first (at most) `n` values from the iterator.
     """
     # TODO: Produce at most `n` values from the given iterator.
-    return iterator
+    if n is None or n == 0:
+        return iterator
+    else:
+        return itertools.islice(iterator, n)
