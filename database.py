@@ -42,15 +42,20 @@ class NEODatabase:
         self._neos = neos
         self._approaches = approaches
 
-        # TODO: What additional auxiliary data structures will be useful?
+        # Create a mapping of NEO designations to their corresponding `NearEarthObject` objects
         neo_map = {}
         for neo in self._neos:
-            neo_map[neo.designation] = neo
-        # TODO: Link together the NEOs and their close approaches.
+            neo_map[self._neos[neo].designation] = self._neos[neo]
+
+        # Link together the NEOs and their close approaches
         for approach in self._approaches:
-            if approach._designation in neo_map:
-                approach.neo = neo_map[approach._designation]
-                neo_map[approach._designation].approaches.append(approach)
+            # If the designation of the close approach is in the mapping,
+            # link the approach and NEO together
+            if approach.designation in neo_map:
+                neo = neo_map[approach.designation]
+                approach.neo = neo
+                approach.fullname = neo.fullname
+                neo_map[approach.designation].approaches.add(approach)
 
     def get_neo_by_designation(self, designation):
         """Find and return an NEO by its primary designation.
@@ -67,9 +72,8 @@ class NEODatabase:
         """
         # TODO: Fetch an NEO by its primary designation.
         for neo in self._neos:
-            if neo.designation == designation:
-                return neo
-
+            if self._neos[neo].designation == designation:
+                return self._neos[neo]
         return None
 
     def get_neo_by_name(self, name):
@@ -88,8 +92,12 @@ class NEODatabase:
         """
         # TODO: Fetch an NEO by its name.
         for neo in self._neos:
-            if neo.name and neo.name.lower() == name.lower():
-                return neo
+            if self._neos[neo].full_name and self._neos[neo].full_name.lower() == name.lower():
+                # print(self._neos[neo])
+                # for approach in self._approaches:
+                #     if self._neos[neo].designation == approach.designation:
+                #         print(approach)
+                return self._neos[neo]
 
         return None
 

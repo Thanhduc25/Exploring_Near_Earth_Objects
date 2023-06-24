@@ -112,15 +112,16 @@ def create_filters(
     # TODO: Decide how you will represent your filters.
     """Create a collection of filters from user-specified criteria."""
     # Initialize an empty list of filters
+    # Initialize an empty list of filters
     filters = []
 
     # Add filters based on input parameters
     if date is not None:
-        filters.append({'attribute': 'time', 'operator': '==', 'value': date})
+        filters.append({'attribute': 'datetime_utc', 'operator': '==', 'value': date})
     if start_date is not None:
-        filters.append({'attribute': 'time', 'operator': '>=', 'value': start_date})
+        filters.append({'attribute': 'datetime_utc', 'operator': '>=', 'value': start_date})
     if end_date is not None:
-        filters.append({'attribute': 'time', 'operator': '<=', 'value': end_date})
+        filters.append({'attribute': 'datetime_utc', 'operator': '<=', 'value': end_date})
     if distance_min is not None:
         filters.append({'attribute': 'distance', 'operator': '>=', 'value': distance_min})
     if distance_max is not None:
@@ -134,9 +135,10 @@ def create_filters(
     if diameter_max is not None:
         filters.append({'attribute': 'diameter', 'operator': '<=', 'value': diameter_max})
     if hazardous is not None:
-        filters.append({'attribute': 'is_hazardous', 'operator': '==', 'value': hazardous})
+        filters.append({'attribute': 'hazardous', 'operator': '==', 'value': hazardous})
 
-    return tuple(AttributeFilter(**f) for f in filters)
+    # Create a collection of AttributeFilters from the list of filters
+    return tuple(AttributeFilter(f['attribute'], f['operator'], f['value']) for f in filters)
 
 
 def limit(iterator, n=None):

@@ -91,7 +91,7 @@ class CloseApproach:
     """
     # TODO: How can you, and should you, change the arguments to this constructor?
     # If you make changes, be sure to update the comments in this file.
-    def __init__(self, designation='', time=None, distance=float('nan'), velocity=float('nan')):
+    def __init__(self, designation='', time=None, distance=float('nan'), velocity=float('nan'), fullname=''):
         """Create a new `CloseApproach`.
 
         :param designation: The designation of the NEO that this `CloseApproach` object refers to.
@@ -107,7 +107,7 @@ class CloseApproach:
         self.time = cd_to_datetime(time) if time else None
         self.distance = float(distance) if distance else float('nan')
         self.velocity = float(velocity) if velocity else float('nan')
-
+        self.fullname = str(fullname) if fullname else ''
         # Initialize the NEO. Designation is stored as a private attribute.
         self.neo = None
 
@@ -134,8 +134,8 @@ class CloseApproach:
         # TODO: Use this object's attributes to return a human-readable string representation.
         # The project instructions include one possibility. Peek at the __repr__
         # method for examples of advanced string formatting.
-        return f"At {self.time_str}, '{self.neo.fullname}' approaches Earth at a distance of {self.distance:.2f} au and a velocity of {self.velocity:.2f} km/s."
+        return f"On {self.time_str}, '{self.fullname}' approaches Earth at a distance of {self.distance:.2f} au and a velocity of {self.velocity:.2f} km/s."
 
     def __repr__(self):
         """Return `repr(self)`, a computer-readable string representation of this object."""
-        return f"CloseApproach(designation={self.neo.designation!r}, time={self.time_str!r}, distance={self.distance:.2f}, velocity={self.velocity:.2f})"
+        return f"CloseApproach(designation={self.designation!r}, time={self.time_str!r}, distance={self.distance:.2f}, velocity={self.velocity:.2f})"
