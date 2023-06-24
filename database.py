@@ -42,20 +42,21 @@ class NEODatabase:
         self._neos = neos
         self._approaches = approaches
 
-        # Create a mapping of NEO designations to their corresponding `NearEarthObject` objects
-        neo_map = {}
-        for neo in self._neos:
-            neo_map[self._neos[neo].designation] = self._neos[neo]
+        # Create a mapping of NEO designations to their `NearEarthObject` objects
+        neo_map = [None] * len(self._neos)
+        for i, neo in enumerate(self._neos):
+            neo_map[i] = (neo.designation, neo)
 
         # Link together the NEOs and their close approaches
         for approach in self._approaches:
             # If the designation of the close approach is in the mapping,
             # link the approach and NEO together
-            if approach.designation in neo_map:
-                neo = neo_map[approach.designation]
-                approach.neo = neo
-                approach.fullname = neo.fullname
-                neo_map[approach.designation].approaches.add(approach)
+            for neo in neo_map:
+                if approach.designation == neo[0]:
+                    approach.neo = neo[1]
+                    approach.fullname = neo[1].fullname
+                    neo[1].approaches.append(approach)
+                    break
 
     def get_neo_by_designation(self, designation):
         """Find and return an NEO by its primary designation.
@@ -92,11 +93,7 @@ class NEODatabase:
         """
         # TODO: Fetch an NEO by its name.
         for neo in self._neos:
-            if self._neos[neo].full_name and self._neos[neo].full_name.lower() == name.lower():
-                # print(self._neos[neo])
-                # for approach in self._approaches:
-                #     if self._neos[neo].designation == approach.designation:
-                #         print(approach)
+            if self._neos[neo].name and self._neos[neo].name.lower() == name.lower():
                 return self._neos[neo]
 
         return None

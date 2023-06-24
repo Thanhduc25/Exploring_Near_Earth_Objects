@@ -35,17 +35,14 @@ def write_to_csv(results, filename):
         writer.writeheader()
 
         for result in results:
-            ca = result[0]
-            neo = result[1]
-
             writer.writerow({
-                'datetime_utc': ca.time_str,
-                'distance_au': ca.distance,
-                'velocity_km_s': ca.velocity,
-                'designation': neo.designation,
-                'name': neo.name or "",
-                'diameter_km': neo.diameter or "",
-                'potentially_hazardous': str(neo.hazardous)
+                'datetime_utc': result.time_str,
+                'distance_au': result.distance,
+                'velocity_km_s': result.velocity,
+                'designation': result.neo.designation,
+                'name': result.neo.fullname or "",
+                'diameter_km': result.neo.diameter or "",
+                'potentially_hazardous': str(result.neo.hazardous)
             })
 
 
@@ -64,20 +61,17 @@ def write_to_json(results, filename):
     close_approaches = []
 
     for result in results:
-        ca = result[0]
-        neo = result[1]
-
         close_approach = {
             'close_approach': {
-                'datetime_utc': ca.time.isoformat(),
-                'distance_au': ca.distance,
-                'velocity_km_s': ca.velocity
+                'datetime_utc': result.time.isoformat(),
+                'distance_au': result.distance,
+                'velocity_km_s': result.velocity
             },
             'neo': {
-                'designation': neo.designation,
-                'name': neo.name,
-                'diameter_km': neo.diameter or "-",
-                'potentially_hazardous': neo.hazardous
+                'designation': result.neo.designation,
+                'name': result.neo.fullname,
+                'diameter_km': result.neo.diameter or "-",
+                'potentially_hazardous': result.neo.hazardous
             }
         }
 

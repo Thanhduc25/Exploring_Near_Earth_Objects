@@ -19,7 +19,6 @@ You'll edit this file in Tasks 3a and 3c.
 import itertools
 import operator
 
-
 class UnsupportedCriterionError(NotImplementedError):
     """A filter criterion is unsupported."""
 
@@ -40,13 +39,14 @@ class AttributeFilter:
     behavior to fetch a desired attribute from the given `CloseApproach`.
     """
     def __init__(self, op, value):
-        """Construct a new `AttributeFilter` from an binary predicate and a reference value.
+        """Construct a new `AttributeFilter` object from an attribute name, binary predicate and a reference value.
 
         The reference value will be supplied as the second (right-hand side)
         argument to the operator function. For example, an `AttributeFilter`
-        with `op=operator.le` and `value=10` will, when called on an approach,
-        evaluate `some_attribute <= 10`.
+        with `attribute=distance`, `op=operator.le` and `value=10` will, when called on an approach,
+        evaluate `approach.distance <= 10`.
 
+        :param attribute: The name of the attribute to filter.
         :param op: A 2-argument predicate comparator (such as `operator.le`).
         :param value: The reference value to compare against.
         """
@@ -72,6 +72,69 @@ class AttributeFilter:
     def __repr__(self):
         return f"{self.__class__.__name__}(op=operator.{self.op.__name__}, value={self.value})"
 
+
+class Date_Filter(AttributeFilter):
+    """Subclass of AttributeFilter to filter CloseApproach objects by date."""
+
+    @classmethod
+    def get(cls, approach):
+        """Return approach.time converted to datetime.datetime object for the date filter.
+
+        :param approach (CloseApproach): A CloseApproach object.
+        :return: converted time to datetime object.
+        """
+        return approach.time.date()
+
+
+class Distance_Filter(AttributeFilter):
+    """Subclass of AttributeFilter to filter approach objects by distance."""
+
+    @classmethod
+    def get(cls, approach):
+        """Return distance of the CloseApproach objectfor the distance filter.
+
+        :param approach (CloseApproach): A CloseApproach object.
+        :return: the distance of a CloseApproach.
+        """
+        return approach.distance
+
+
+class Velocity_Filter(AttributeFilter):
+    """Subclass of AttributeFilter to filter approach objects by velocity."""
+
+    @classmethod
+    def get(cls, approach):
+        """Return approach.velocity for the velocity filter.
+
+        :param approach (CloseApproach): A CloseApproach object.
+        :return: the velocity of a CloseApproach.
+        """
+        return approach.velocity
+
+class Diameter_Filter(AttributeFilter):
+    """Subclass of AttributeFilter to filter approach objects by diameter."""
+
+    @classmethod
+    def get(cls, approach):
+        """Return the diameter of the neo assigned to the CloseApproach object for the diameter filter.
+
+        :param approach (CloseApproach): A CloseApproach object.
+        :return: the diameter of a NearEarthObject object.
+        """
+        return approach.neo.diameter
+
+class Hazardous_Filter(AttributeFilter):
+    """Subclass to filter CloseApproach objects by if it's Dangerous."""
+
+    @classmethod
+    def get(cls, approach):
+        """Return the hazardous attribute of the neo assigned to the CloseApproach object for the diameter filter.
+
+        :param approach (CloseApproach): A CloseApproach object.
+        :return: the hazardous attribute of a NearEarthObject object.
+
+        """
+        return approach.neo.hazardous
 
 def create_filters(
         date=None, start_date=None, end_date=None,
@@ -111,34 +174,30 @@ def create_filters(
     """
     # TODO: Decide how you will represent your filters.
     """Create a collection of filters from user-specified criteria."""
-    # Initialize an empty list of filters
-    # Initialize an empty list of filters
     filters = []
 
-    # Add filters based on input parameters
-    if date is not None:
-        filters.append({'attribute': 'datetime_utc', 'operator': '==', 'value': date})
-    if start_date is not None:
-        filters.append({'attribute': 'datetime_utc', 'operator': '>=', 'value': start_date})
-    if end_date is not None:
-        filters.append({'attribute': 'datetime_utc', 'operator': '<=', 'value': end_date})
-    if distance_min is not None:
-        filters.append({'attribute': 'distance', 'operator': '>=', 'value': distance_min})
-    if distance_max is not None:
-        filters.append({'attribute': 'distance', 'operator': '<=', 'value': distance_max})
-    if velocity_min is not None:
-        filters.append({'attribute': 'velocity', 'operator': '>=', 'value': velocity_min})
-    if velocity_max is not None:
-        filters.append({'attribute': 'velocity', 'operator': '<=', 'value': velocity_max})
-    if diameter_min is not None:
-        filters.append({'attribute': 'diameter', 'operator': '>=', 'value': diameter_min})
-    if diameter_max is not None:
-        filters.append({'attribute': 'diameter', 'operator': '<=', 'value': diameter_max})
+    if date:
+        filters.append(Date_Filter(operator.eq, date))
+    if start_date:
+        filters.append(Date_Filter(operator.ge, start_date))
+    if end_date:
+        filters.append(Date_Filter(operator.le, end_date))
+    if distance_min:
+        filters.append(Distance_Filter(operator.ge, distance_min))
+    if distance_max:
+        filters.append(Distance_Filter(operator.le, distance_max))
+    if velocity_min:
+        filters.append(Velocity_Filter(operator.ge, velocity_min))
+    if velocity_max:
+        filters.append(Velocity_Filter(operator.le, velocity_max))
+    if diameter_min:
+        filters.append(Diameter_Filter(operator.ge, diameter_min))
+    if diameter_max:
+        filters.append(Diameter_Filter(operator.le, diameter_max))
     if hazardous is not None:
-        filters.append({'attribute': 'hazardous', 'operator': '==', 'value': hazardous})
+        filters.append(Hazardous_Filter(operator.eq, hazardous))
 
-    # Create a collection of AttributeFilters from the list of filters
-    return tuple(AttributeFilter(f['attribute'], f['operator'], f['value']) for f in filters)
+    return filters
 
 
 def limit(iterator, n=None):

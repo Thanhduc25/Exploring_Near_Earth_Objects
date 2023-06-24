@@ -48,7 +48,7 @@ class NearEarthObject:
         # handle any edge cases, such as a empty name being represented by `None`
         # and a missing diameter being represented by `float('nan')`.
         self.designation = str(designation)
-        self.full_name = str(name) if name else None
+        self.name = str(name) if name else None
         self.diameter = float(diameter) if diameter else float('nan')
         self.hazardous = bool(hazardous)
 
@@ -59,7 +59,7 @@ class NearEarthObject:
     def fullname(self):
         """Return a representation of the full name of this NEO."""
         # TODO: Use self.designation and self.name to build a fullname for this object.
-        return f"{self.designation} ({self.full_name})" if self.full_name else self.designation
+        return f"{self.designation} ({self.name})" if self.name else self.designation
         return ''
 
     def __str__(self):
@@ -67,7 +67,7 @@ class NearEarthObject:
         # TODO: Use this object's attributes to return a human-readable string representation.
         # The project instructions include one possibility. Peek at the __repr__
         # method for examples of advanced string formatting.
-        formatted_name = f" ({self.full_name})" if self.full_name else ""
+        formatted_name = f" ({self.name})" if self.name else ""
         return f"NEO {self.designation}{formatted_name} has a diameter of {self.diameter:.3f} km and is{' ' if not self.hazardous else ' potentially '}hazardous."
 
     def __repr__(self):
@@ -91,7 +91,7 @@ class CloseApproach:
     """
     # TODO: How can you, and should you, change the arguments to this constructor?
     # If you make changes, be sure to update the comments in this file.
-    def __init__(self, designation='', time=None, distance=float('nan'), velocity=float('nan'), fullname=''):
+    def __init__(self, designation='', time=None, distance=float('nan'), velocity=float('nan'), name=''):
         """Create a new `CloseApproach`.
 
         :param designation: The designation of the NEO that this `CloseApproach` object refers to.
@@ -107,7 +107,7 @@ class CloseApproach:
         self.time = cd_to_datetime(time) if time else None
         self.distance = float(distance) if distance else float('nan')
         self.velocity = float(velocity) if velocity else float('nan')
-        self.fullname = str(fullname) if fullname else ''
+        self.name = str(name) if name else ''
         # Initialize the NEO. Designation is stored as a private attribute.
         self.neo = None
 
@@ -134,7 +134,7 @@ class CloseApproach:
         # TODO: Use this object's attributes to return a human-readable string representation.
         # The project instructions include one possibility. Peek at the __repr__
         # method for examples of advanced string formatting.
-        return f"On {self.time_str}, '{self.fullname}' approaches Earth at a distance of {self.distance:.2f} au and a velocity of {self.velocity:.2f} km/s."
+        return f"On {self.time_str}, '{self.name}' approaches Earth at a distance of {self.distance:.2f} au and a velocity of {self.velocity:.2f} km/s."
 
     def __repr__(self):
         """Return `repr(self)`, a computer-readable string representation of this object."""
